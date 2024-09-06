@@ -1,0 +1,11 @@
+# .air.toml
+[build]
+  bin = "tmp/main"                 # Path to the binary to be created
+  cmd = "go build -o tmp/main cmd/govinci/main.go"  # Build command
+  include = ["cmd", "pkg"]         # Directories to watch for changes
+  exclude = ["tmp"]                # Directories to exclude from watching
+  rebuild = true                   # Rebuild the binary on changes
+
+[log]
+  time = true                      # Show timestamps in logs
+  color = true                     # Use colored logs
