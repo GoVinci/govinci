@@ -10,9 +10,22 @@ import (
 )
 
 func getUserHandler(w http.ResponseWriter, r *http.Request) {
-    params := r.Context().Value("params").(map[string]string)
-    userID := params["id"]
-    w.Write([]byte("User ID: " + userID))
+    // Safely retrieve the parameters from the context
+    params, ok := r.Context().Value(routing.ParamsKey).(map[string]string)
+    if !ok {
+        http.Error(w, "Invalid parameters", http.StatusBadRequest)
+        return
+    }
+    
+    // Check if the user ID exists in the parameters
+    userID, exists := params["id"]
+    if !exists {
+        http.Error(w, "User ID not found", http.StatusBadRequest)
+        return
+    }
+    
+    // Respond with the user ID
+    w.Write([]byte("My User ID: " + userID))
 }
 
 func main() {
@@ -34,7 +47,5 @@ func main() {
     // Apply middleware to routes
     router.Handle("GET", "/users/:id", logMiddleware(errorMiddleware(getUserHandler)))
 
-    
-    
     log.Fatal(http.ListenAndServe(":8080", router))
 }
